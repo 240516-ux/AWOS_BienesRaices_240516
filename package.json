@@ -1,0 +1,35 @@
+{
+  "name": "awos_bienesraices_240516",
+  "version": "1.0.0",
+  "description": "Sistema de Bienes Raices basado en NodeJS, MVC Y API REST",
+  "type": "module",
+  "main": "index.js",
+ "scripts": {
+  "dev": "nodemon index.js"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/240516-ux/AWOS_BienesRaices_240516.git"
+  },
+  "keywords": [
+    "MVC",
+    "Sequelize",
+    "NodeJS",
+    "API",
+    "Rest",
+    "TailwindCSS",
+    "Leaflet"
+  ],
+  "author": "Alan Cruz Baltazar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/240516-ux/AWOS_BienesRaices_240516/issues"
+  },
+  "homepage": "https://github.com/240516-ux/AWOS_BienesRaices_240516#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
