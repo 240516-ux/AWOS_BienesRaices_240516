@@ -4,9 +4,10 @@
   "description": "Sistema de Bienes Raices basado en NodeJS, MVC Y API REST",
   "type": "module",
   "main": "index.js",
- "scripts": {
-  "dev": "nodemon index.js"
-},
+  "scripts": {
+    "dev": "nodemon index.js",
+    "watch:css": "npx @tailwindcss/cli -i ./src/css/styles.css -o ./public/css/styles.css --watch"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/240516-ux/AWOS_BienesRaices_240516.git"
@@ -27,9 +28,14 @@
   },
   "homepage": "https://github.com/240516-ux/AWOS_BienesRaices_240516#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pug": "^3.0.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@tailwindcss/cli": "^4.2.0",
+    "autoprefixer": "^10.4.24",
+    "nodemon": "^3.1.13",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.0"
   }
 }
