@@ -1,16 +1,23 @@
-const login = (req, res) => {
-    res.render('auth/login', {
-        pagina: 'Iniciar Sesión'
-    })
+const formularioLogin = (req, res) => {
+    res.render("auth/login", {
+        pagina: "Inicia sesión"
+    });
 }
 
-const registro = (req, res) => {
-    res.render('auth/registro', {
-        pagina: 'Crear Cuenta'
-    })
+const formularioRegistro = (req, res) => {
+    res.render("auth/registro", {
+        pagina: "Registrate con nosotros :)"
+    });
+}
+
+const formularioRecuperacion = (req, res) => {
+    res.render("auth/recuperarPassword", {
+        pagina: "Te ayudamos a restaurar tu contraseña"
+    });
 }
 
 export {
-    login,
-    registro
+    formularioLogin,
+    formularioRegistro,
+    formularioRecuperacion
 }
