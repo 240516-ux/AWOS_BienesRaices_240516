@@ -1,10 +1,17 @@
 //console.log("Hola desde JS");
 import express from 'express'
 import { connectDB } from './config/db.js';
+import usuarioRoutes from './routes/usuarioRoutes.js'  
 
 // Crea una instancia del contenedor web 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
+
+// HABILITAR LECTURA DE FORMULARIOS
+app.use(express.urlencoded({extended: true}))  
+
+// RUTAS DE USUARIO
+app.use("/auth", usuarioRoutes)  
 
 // GET
 app.get("/", (req, res)=>{
