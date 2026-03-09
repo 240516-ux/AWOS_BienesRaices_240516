@@ -1,3 +1,4 @@
+import { check, validationResult } from 'express-validator'
 import Usuario from '../Models/Usuario.js'
 
 const formularioLogin = (req, res) => {
@@ -5,24 +6,49 @@ const formularioLogin = (req, res) => {
         pagina: "Inicia sesión"
     });
 }
+
 const formularioRegistro = (req, res) => {
     res.render("auth/registro", {
         pagina: "Registrate con nosotros :)"
     });
 }
-const registrarUsuario = async(req,res) =>
-{
+
+const registrarUsuario = async (req, res) => {
+
     console.log("Intentando registrar a un Usuario Nuevo con los datos del formulario:");
     console.log(req.body);
 
-    const data =
-    {
+    await check('nombreUsuario')
+        .notEmpty()
+        .withMessage('El nombre es obligatorio')
+        .run(req)
+
+    await check('emailUsuario')
+        .isEmail()
+        .withMessage('El correo no es válido')
+        .run(req)
+
+    await check('passwordUsuario')
+        .isLength({ min: 8 })
+        .withMessage('La contraseña debe tener mínimo 8 caracteres')
+        .run(req)
+
+    const resultadoValidacion = validationResult(req)
+
+    if (!resultadoValidacion.isEmpty()) {
+        return res.render("auth/registro", {
+            pagina: "Registrate con nosotros :)",
+            errores: resultadoValidacion.array()
+        })
+    }
+
+    const data = {
         nombre: req.body.nombreUsuario,
         email: req.body.emailUsuario,
         password: req.body.passwordUsuario
     }
 
-    const usuario = await Usuario.create(data);
+    const usuario = await Usuario.create(data)
 
     res.json(usuario)
 }
