@@ -1,6 +1,7 @@
 import { check, validationResult } from 'express-validator'
 import Usuario from '../Models/Usuario.js'
 import { generarToken } from '../lib/tokens.js'
+import { emailRegistro } from '../lib/emails.js'
 
 const formularioLogin = (req, res) => {
     res.render("auth/login", {
@@ -37,19 +38,15 @@ const registrarUsuario = async (req, res) => {
     
         const resultadoValidacion = validationResult(req)
 
-    
         const existeUsuario = await Usuario.findOne({
-    
-            where: { email: req.body.emailUsuario }
+             where: { email: req.body.emailUsuario }
         })
 
 
         if (existeUsuario) {
     
             return res.render("auth/registro", {
-        
                 pagina: "Registrate con nosotros :)",
-        
                 errores: [{ msg: "El usuario ya está registrado" }]
     
             })
@@ -67,20 +64,24 @@ const registrarUsuario = async (req, res) => {
     }
 
     const data =
-
     {
-        nombre: req.body.nombreUsuario,
+        name: req.body.nombreUsuario,
         email: req.body.emailUsuario,
         password: req.body.passwordUsuario,
         token: generarToken()
     }
-
     
     const usuario = await Usuario.create(data)
-    
-    res.render("templates/mensaje",{
+
+    //Enviar correo
+     emailRegistro({
+        nombre: usuario.name,
+        email: usuario.email,
+        token: usuario.token
+     })
+      res.render("templates/mensaje",{
          title: "¡Bienvenid@ a BienesRaíces!",
-         msg: `La cuenta asociada al correo: ${req.body.emailUsuario}, se ha creado exitosamente, te pedimos confirmar tu a través del correo electrónico que te hemos enviado.`
+         msg: `La cuenta asociada al correo: ${req.body.emailUsuario}, se ha creado exitosamente, revisa tu correo para confirmarla.`
         })
 
     }
