@@ -43,6 +43,18 @@ app.use((req, res, next) => {
 
 })
 
+// Manejo de errores CSRF
+app.use((err, req, res, next) => {
+
+    if (err.code === "EBADCSRFTOKEN") {
+        console.log("Ataque CSRF detectado")
+
+        return res.status(403).send("Formulario inválido o token CSRF incorrecto")
+    }
+
+    next(err)
+})
+
 // RUTAS DE USUARIO
 app.use("/auth", usuarioRoutes)  
 
