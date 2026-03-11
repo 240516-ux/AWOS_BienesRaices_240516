@@ -34,41 +34,61 @@ const registrarUsuario = async (req, res) => {
         .withMessage('La contraseña debe tener mínimo 8 caracteres')
         .run(req)
 
-    const resultadoValidacion = validationResult(req)
+    
+        const resultadoValidacion = validationResult(req)
 
-    const existeUsuario = await Usuario.findOne({
-    where: { email: req.body.emailUsuario }
-})
+    
+        const existeUsuario = await Usuario.findOne({
+    
+            where: { email: req.body.emailUsuario }
+        })
 
-if (existeUsuario) {
-    return res.render("auth/registro", {
-        pagina: "Registrate con nosotros :)",
-        errores: [{ msg: "El usuario ya está registrado" }]
-    })
-}
 
-    if (!resultadoValidacion.isEmpty()) {
+        if (existeUsuario) {
+    
+            return res.render("auth/registro", {
+        
+                pagina: "Registrate con nosotros :)",
+        
+                errores: [{ msg: "El usuario ya está registrado" }]
+    
+            })
+
+        }
+
+
+        if (!resultadoValidacion.isEmpty()) {
         return res.render("auth/registro", {
             pagina: "Registrate con nosotros :)",
             errores: resultadoValidacion.array()
+        
         })
+    
     }
 
     const data =
-{
-    nombre: req.body.nombreUsuario,
-    email: req.body.emailUsuario,
-    password: req.body.passwordUsuario,
-    token: generarToken()
-}
 
+    {
+        nombre: req.body.nombreUsuario,
+        email: req.body.emailUsuario,
+        password: req.body.passwordUsuario,
+        token: generarToken()
+    }
+
+    
     const usuario = await Usuario.create(data)
+    
+    res.render("templates/mensaje",{
+         title: "¡Bienvenid@ a BienesRaíces!",
+         msg: `La cuenta asociada al correo: ${req.body.emailUsuario}, se ha creado exitosamente, te pedimos confirmar tu a través del correo electrónico que te hemos enviado.`
+        })
 
-    res.json(usuario)
-}
+    }
 
-const formularioRecuperacion = (req, res) => {
-    res.render("auth/recuperarPassword", {
+
+    const formularioRecuperacion = (req, res) => {
+    
+        res.render("auth/recuperarPassword", {
         pagina: "Te ayudamos a restaurar tu contraseña"
     });
 }
