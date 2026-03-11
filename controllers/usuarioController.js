@@ -1,5 +1,5 @@
 import { check, validationResult } from 'express-validator'
-import Usuario from '../Models/Usuario.js'
+import Usuario from '../models/Usuario.js'
 import { generarToken } from '../lib/tokens.js'
 import { emailRegistro } from '../lib/emails.js'
 
@@ -93,10 +93,39 @@ const registrarUsuario = async (req, res) => {
         pagina: "Te ayudamos a restaurar tu contraseña"
     });
 }
+const paginaConfirmacion = async (req, res) => {
+
+    const { token: tokenCuenta } = req.params
+    console.log("Confirmando la cuenta asociada al token:", tokenCuenta)
+
+    const usuarioToken = await Usuario.findOne({
+        where: { token: tokenCuenta }
+    })
+
+    if (!usuarioToken) {
+
+        return res.render("templates/mensaje", {
+            title: "Error al confirmar la cuenta",
+            msg: "El código de verificación no es válido, intenta nuevamente."
+        })
+    }
+
+    // Confirmar cuenta
+    usuarioToken.token = null
+    usuarioToken.confirmed = true
+    await usuarioToken.save()
+
+    res.render("templates/mensaje", {
+        title: "Confirmación exitosa",
+        msg: `La cuenta de ${usuarioToken.name}, asociada al correo ${usuarioToken.email} se ha confirmado correctamente.`
+    })
+
+}
 
 export {
     formularioLogin,
     formularioRegistro,
     registrarUsuario,
-    formularioRecuperacion
+    formularioRecuperacion,
+    paginaConfirmacion
 }
