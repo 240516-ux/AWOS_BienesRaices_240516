@@ -37,7 +37,6 @@ app.use(csurf())
 
 // Habilitar los tokens CSRF para cualquier formulario
 app.use((req, res, next) => {
-
     res.locals.csrfToken = req.csrfToken();
     next();
 
@@ -48,7 +47,6 @@ app.use((err, req, res, next) => {
 
     if (err.code === "EBADCSRFTOKEN") {
         console.log("Ataque CSRF detectado")
-
         return res.status(403).send("Formulario inválido o token CSRF incorrecto")
     }
 
