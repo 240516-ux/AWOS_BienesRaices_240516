@@ -1,7 +1,11 @@
 //console.log("Hola desde JS");
 import express from 'express'
 import { connectDB } from './config/db.js';
-import usuarioRoutes from './routes/usuarioRoutes.js'  
+import usuarioRoutes from './routes/usuarioRoutes.js' 
+
+import session from "express-session"
+import cookieParser from "cookie-parser"
+import csurf from "@dr.pogodin/csurf"
 
 // Crea una instancia del contenedor web 
 const app = express();
@@ -9,6 +13,35 @@ const PORT = process.env.PORT ?? 4000;
 
 // HABILITAR LECTURA DE FORMULARIOS
 app.use(express.urlencoded({extended: true}))  
+
+// Activar cookies
+app.use(cookieParser())
+
+// Permitir JSON
+app.use(express.json())
+
+// Sesiones
+app.use(session({
+    secret: process.env.SESSION_SECRET || "PC-BienesRaices_csrf_secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie:{
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production"
+    }
+}))
+
+//Activar CSRF
+app.use(csurf())
+
+// Habilitar los tokens CSRF para cualquier formulario
+app.use((req, res, next) => {
+
+    res.locals.csrfToken = req.csrfToken();
+    next();
+
+})
 
 // RUTAS DE USUARIO
 app.use("/auth", usuarioRoutes)  
