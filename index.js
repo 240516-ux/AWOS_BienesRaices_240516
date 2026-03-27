@@ -1,7 +1,7 @@
 //console.log("Hola desde JS");
 import express from 'express'
 import { connectDB } from './config/db.js';
-import usuarioRoutes from './routes/usuarioRoutes.js' 
+import usuarioRoutes from './routes/usuarioRoutes.js'
 
 import session from "express-session"
 import cookieParser from "cookie-parser"
@@ -10,6 +10,13 @@ import csurf from "@dr.pogodin/csurf"
 // Crea una instancia del contenedor web 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
+
+app.use(express.static('public'));
+
+
+// Configurar motor de vistas
+app.set('view engine', 'pug');
+app.set('views', './views');
 
 // HABILITAR LECTURA DE FORMULARIOS
 app.use(express.urlencoded({extended: true}))  
@@ -33,28 +40,22 @@ app.use(session({
 }))
 
 //Activar CSRF
-app.use(csurf())
+ app.use(csurf())
 
 // Habilitar los tokens CSRF para cualquier formulario
+
 app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     next();
 
 })
-
-// Manejo de errores CSRF
-app.use((err, req, res, next) => {
-
-    if (err.code === "EBADCSRFTOKEN") {
-        console.log("Ataque CSRF detectado")
-        return res.status(403).send("Formulario inválido o token CSRF incorrecto")
-    }
-
-    next(err)
-})
+    
 
 // RUTAS DE USUARIO
 app.use("/auth", usuarioRoutes)  
+app.get('/auth/test', (req, res) => {
+    res.send("TEST AUTH FUNCIONA");
+});
 
 // GET
 app.get("/", (req, res)=>{
@@ -79,7 +80,7 @@ app.post("/createUser", (req, res) =>{
     })
 })
     
-
+//- 123456
 // PUT - Actualización Completa
 app.put("/actualizarOferta/",(req, res)=>{
     console.log("Se esta procesando una petición del tipo PUT");
@@ -125,8 +126,8 @@ app.patch("/actualizarPassword/:nuevoPassword", (req, res)=>{
 // DELETE
 app.delete("/borrarPropiedad/:id", (req, res)=>{
     console.log("Se esta procesando una petición del tipo DELETE");
-    const {id} = req.params;
-
+        const {id} = req.params;
+///
     res.json({
         status:200, 
         message: `Se ha eliminado la propiedad con id : ${id}`
@@ -134,7 +135,19 @@ app.delete("/borrarPropiedad/:id", (req, res)=>{
 })
 
 
+
 await connectDB();
 app.listen(PORT, ()=> {
     console.log(`El servidor esta iniciado en el puerto ${PORT}`)
+})
+
+// Manejo de errores CSRF
+app.use((err, req, res, next) => {
+
+    if (err.code === "EBADCSRFTOKEN") {
+        console.log("Ataque CSRF detectado")
+        return res.status(403).send("Formulario inválido o token CSRF incorrecto")
+    }
+
+    next(err)
 })
