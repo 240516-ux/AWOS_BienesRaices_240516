@@ -29,6 +29,7 @@
   "homepage": "https://github.com/240516-ux/AWOS_BienesRaices_240516#readme",
   "dependencies": {
     "@dr.pogodin/csurf": "^1.16.8",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
