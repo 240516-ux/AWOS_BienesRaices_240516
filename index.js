@@ -7,7 +7,7 @@ import session from "express-session"
 import cookieParser from "cookie-parser"
 import csurf from "@dr.pogodin/csurf"
 
-// Crea una instancia del contenedor web   1234567 
+// Crea una instancia del contenedor web 
 const app = express();
 const PORT = process.env.PORT ?? 4000;
 
@@ -125,9 +125,8 @@ app.patch("/actualizarPassword/:nuevoPassword", (req, res)=>{
 
 // DELETE
 app.delete("/borrarPropiedad/:id", (req, res)=>{
-    console.log("Se esta procesando una petición del tipo DELETE");
-        const {id} = req.params;
-///
+    console.log("Se esta procesando una petición del tipo DELETE");    const {id} = req.params;
+
     res.json({
         status:200, 
         message: `Se ha eliminado la propiedad con id : ${id}`
