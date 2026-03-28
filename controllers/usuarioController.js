@@ -128,9 +128,22 @@ const paginaConfirmacion = async (req, res) => {
 
 const resetearPassword = async(req, res) => {
     const {emailUsuario:usuarioSolicitante} = req.body
+    await check('emailUsuario')
+        .notEmpty().withMessage("El correo no puede ir vacío")
+        .isEmail().withMessage("Formato inválido")
+        .run(req)
+
+    const resultado = validationResult(req)
+
+    if(!resultado.isEmpty()){
+        return res.render("auth/recuperarPassword", {
+            pagina: "Error",
+            errores: resultado.array(),
+            usuario: { emailUsuario: req.body.emailUsuario }
+        })
+    }
 
     const usuario = await Usuario.findOne({where: { email: usuarioSolicitante}});
-
     if(!usuario) {
         return res.render("templates/mensaje",{
             title: "Error",
