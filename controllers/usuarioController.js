@@ -180,6 +180,46 @@ const resetearPassword = async(req, res) => {
     });
 }
 
+const actualizarPassword = async(req, res) => {
+
+    const { emailSolicitante, passwordUsuario, confirmacionUsuario } = req.body
+
+    // validaciones
+    await check('passwordUsuario')
+        .notEmpty().withMessage("La contraseña no puede ir vacía")
+        .isLength({ min: 8 }).withMessage("Mínimo 8 caracteres")
+        .run(req)
+        
+        await check('confirmacionUsuario')
+        .equals(passwordUsuario).withMessage("Las contraseñas no coinciden")
+        .run(req)
+        
+        const resultado = validationResult(req)
+        
+        if(!resultado.isEmpty()){
+            return res.render("auth/resetearPassword", {
+            pagina: "Error",
+            errores: resultado.array()
+        })
+    }
+
+    // Actualizar usuario
+    const usuario = await Usuario.findOne({ where: { email: emailSolicitante } })
+
+    usuario.password = passwordUsuario
+    usuario.token = null
+
+    await usuario.save()
+    
+    res.render("templates/mensaje",{
+        title: "Contraseña actualizada",
+        msg: "Tu contraseña se actualizó correctamente",
+        buttonVisibility: true,
+        buttonText: "Iniciar sesión",
+        buttonURL: "/auth/login"
+    })
+}
+
 export {
     formularioLogin,
     formularioRegistro,
@@ -187,5 +227,6 @@ export {
     formularioRecuperacion,
     paginaConfirmacion,
     resetearPassword,
-    formularioActualizacionPassword
+    formularioActualizacionPassword,
+    actualizarPassword
 }

@@ -21,5 +21,6 @@ router.get("/actualizarPassword/:token", formularioActualizacionPassword)
 //POST
 router.post("/registro", registrarUsuario)
 router.post("/recuperarPassword", resetearPassword)
+router.post("/actualizarPassword", actualizarPassword)
 
 export default router
