@@ -1,7 +1,7 @@
 import { check, validationResult } from 'express-validator'
 import Usuario from '../models/Usuario.js'
 import { generarToken } from '../lib/tokens.js'
-import { emailRegistro } from '../lib/emails.js'
+import { emailRegistro, emailResetearPassword } from '../lib/emails.js'
 
 const formularioLogin = (req, res) => {
     res.render("auth/login", {
@@ -13,6 +13,10 @@ const formularioRegistro = (req, res) => {
     res.render("auth/registro", {
         pagina: "Registrate con nosotros :)"
     });
+}
+
+const formularioActualizacionPassword = (req,res) => {
+    res.render("auth/resetearPassword", {pagina: "Ingresa tu nueva contraseña"});
 }
 
 const registrarUsuario = async (req, res) => {
@@ -122,10 +126,53 @@ const paginaConfirmacion = async (req, res) => {
 
 }
 
+const resetearPassword = async(req, res) => {
+    const {emailUsuario:usuarioSolicitante} = req.body
+
+    const usuario = await Usuario.findOne({where: { email: usuarioSolicitante}});
+
+    if(!usuario) {
+        return res.render("templates/mensaje",{
+            title: "Error",
+            msg: `No existe una cuenta con ese correo`,
+            buttonVisibility: true,
+            buttonText: "Intentar de nuevo",
+            buttonURL: "/auth/recuperarPassword"
+        });
+    }
+
+    if (!usuario.confirmed) {
+        return res.render("templates/mensaje",{
+            title: "Cuenta no confirmada",
+            msg: `Debes confirmar tu cuenta primero`,
+            buttonVisibility: true,
+            buttonText: "Intentar de nuevo",
+            buttonURL: "/auth/recuperarPassword"
+        });
+    }
+
+    usuario.token = generarToken();
+    await usuario.save();
+
+    await emailResetearPassword({
+        nombre: usuario.name,
+        email: usuario.email,
+        token: usuario.token
+    });
+
+    res.render("templates/mensaje",{
+        title: "Correo enviado",
+        msg: `Revisa tu correo para continuar`,
+        buttonVisibility: false
+    });
+}
+
 export {
     formularioLogin,
     formularioRegistro,
     registrarUsuario,
     formularioRecuperacion,
-    paginaConfirmacion
+    paginaConfirmacion,
+    resetearPassword,
+    formularioActualizacionPassword
 }
